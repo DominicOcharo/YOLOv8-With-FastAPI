@@ -49,6 +49,6 @@ Contains the trained YOLOv8 model weights.
 
 ### Example Website outputs:
 
-![alt text](https://github.com/DominicOcharo/YOLOv8-With-FastAPI/blob/main/images/webresults2.png?raw=true)
+![alt text](https://github.com/DominicOcharo/YOLOv8-With-FastAPI/blob/main/images/webresults.png?raw=true)
 
 ![alt text](https://github.com/DominicOcharo/YOLOv8-With-FastAPI/blob/main/images/webresults2.png?raw=true)
