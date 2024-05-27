@@ -1,9 +1,4 @@
-# For type annotations
-from typing import Dict, Union, List
-
-# For encoding binary data
-import base64
-
+# routers/yolo.py
 # For API operations and standards
 from fastapi import APIRouter, UploadFile, Response, status, HTTPException
 # Our detector objects
@@ -23,25 +18,29 @@ router = APIRouter(tags=["Image Upload and analysis"], prefix="/yolo")
 # but for simplicity, we can keep things in memory
 images = []
 
-@router.post("/", 
-             status_code=status.HTTP_201_CREATED, 
-             response_model=Dict[str, Union[str, List[str]]])
-async def yolo_image_upload(file: UploadFile) -> Dict[str, Union[str, List[str]]]:
+@router.post("/",
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        201: {"description": "Successfully Analyzed Image."}
+    },
+    response_model=ImageAnalysisResponse,
+)
+async def yolo_image_upload(file: UploadFile) -> ImageAnalysisResponse:
     """Takes a multi-part upload image and runs yolov8 on it to detect objects
 
     Arguments:
         file (UploadFile): The multi-part upload file
     
     Returns:
-        response (Dict[str, Union[str, List[str]]]): The encoded image and labels
+        response (ImageAnalysisResponse): The image ID and labels in 
+                                          the pydantic object
     """
     contents = await file.read()
     dt = yolov8.YoloV8ImageObjectDetection(chunked=contents)
     frame, labels = await dt()
     success, encoded_image = cv2.imencode(".png", frame)
-    encoded_image_str = base64.b64encode(encoded_image).decode()
-    return {"image": encoded_image_str, "labels": labels}
-
+    images.append((encoded_image, labels))
+    return ImageAnalysisResponse(id=len(images), labels=labels)
 
 
 @router.get(
