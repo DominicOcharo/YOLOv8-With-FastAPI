@@ -13,7 +13,10 @@ import platform
 from ultralytics import YOLO
 
 class YoloV8ImageObjectDetection:
-    CUSTOM_MODEL_PATH = r"..\weights\best.pt" 
+    # CUSTOM_MODEL_PATH = r"..\weights\best.pt" 
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    relative_path_components = ['..', '..', 'weights', 'best.pt']
+    CUSTOM_MODEL_PATH = os.path.join(current_directory, *relative_path_components)
 
     def __init__(self, chunked: bytes = None, threshold: float = 0.6):
 
