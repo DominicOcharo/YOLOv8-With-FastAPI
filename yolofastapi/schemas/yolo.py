@@ -1,7 +1,7 @@
+# schemas/yolo.py
 from pydantic import BaseModel
-from typing import Set
-
+from typing import List 
 
 class ImageAnalysisResponse(BaseModel):
     id: int
-    labels: Set[str]
+    labels: List[str]

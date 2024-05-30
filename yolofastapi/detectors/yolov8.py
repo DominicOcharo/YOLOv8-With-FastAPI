@@ -1,3 +1,4 @@
+# yolov8.py inside detectors sub directory:
 # For machine learning
 import torch
 # For array computations
@@ -14,13 +15,10 @@ from ultralytics import YOLO
 class YoloV8ImageObjectDetection:
     CUSTOM_MODEL_PATH = r"..\weights\best.pt" 
 
-    def __init__(self, chunked: bytes = None):
-        """Initializes a yolov8 detector with a binary image
-        
-        Arguments:
-            chunked (bytes): A binary image representation
-        """
+    def __init__(self, chunked: bytes = None, threshold: float = 0.6):
+
         self._bytes = chunked
+        self.threshold = threshold
         self.model = self._load_model()
         self.device = self._get_device()
         self.classes = self.model.names
@@ -52,18 +50,16 @@ class YoloV8ImageObjectDetection:
         and returns the annotated image and its labels
         
         Returns:
-            frame (numpy.ndarray): Frame with bounding boxes and labels ploted on it.
+            frame (numpy.ndarray): Frame with bounding boxes and labels plotted on it.
             labels (list(str)): The corresponding labels that were found
         """
         frame = self._get_image_from_chunked()
         results = self.model(frame)
         frame, labels = self.plot_boxes(results, frame)
-        return frame, set(labels)
-    
+        return frame, labels
     
     def _get_image_from_chunked(self):
-        """Loads an openCV image from the raw image bytes passed by
-        the API.
+        """Loads an openCV image from the raw image bytes passed by the API.
 
         Returns: 
             img (numpy.ndarray): opencv2 image object from the raw binary
@@ -91,15 +87,16 @@ class YoloV8ImageObjectDetection:
             frame (numpy.ndarray): Frame which has been scored.
         
         Returns:
-            frame (numpy.ndarray): Frame with bounding boxes and labels ploted on it.
+            frame (numpy.ndarray): Frame with bounding boxes and labels plotted on it.
             labels (list(str)): The corresponding labels that were found
         """
+        labels = []
         for r in results:
             boxes = r.boxes
-            labels = []
             for box in boxes:
-                c = box.cls
-                l = self.model.names[int(c)]
-                labels.append(l)
+                if box.conf >= self.threshold:  # Apply the threshold here
+                    c = box.cls
+                    l = self.model.names[int(c)]
+                    labels.append(l)
         frame = results[0].plot()
         return frame, labels
