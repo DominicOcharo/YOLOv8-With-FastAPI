@@ -93,13 +93,15 @@ class YoloV8ImageObjectDetection:
             frame (numpy.ndarray): Frame with bounding boxes and labels plotted on it.
             labels (list(str)): The corresponding labels that were found
         """
-        labels = []
+        labels_confidences = []
         for r in results:
             boxes = r.boxes
             for box in boxes:
-                if box.conf >= self.threshold:  # Apply the threshold here
+                if box.conf >= self.threshold:
                     c = box.cls
                     l = self.model.names[int(c)]
-                    labels.append(l)
+                    conf = round(box.conf[0].item(), 2)
+                    labels_confidences.append((l, conf))
         frame = results[0].plot()
-        return frame, labels
+        return frame, labels_confidences
+    
