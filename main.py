@@ -1,6 +1,8 @@
 from uvicorn import Server, Config
 from fastapi import FastAPI
-from starlette.middleware.cors import CORSMiddleware
+# from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
+
 import os
 
 from yolofastapi.routers import yolo
@@ -9,8 +11,8 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=False,
     allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
