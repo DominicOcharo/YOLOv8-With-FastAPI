@@ -10,3 +10,5 @@ class FilteredImageAnalysisResponse(BaseModel):
     id: int
     filtered_labels: List[str]
     filtered_confidences: List[float]
+    recommendation: str
+    percentage: float
