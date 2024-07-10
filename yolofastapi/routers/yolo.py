@@ -97,12 +97,14 @@ async def yolo_image_upload_filtered(file: UploadFile) -> FilteredImageAnalysisR
         overall_percentage = (hardhat_percentage + safety_vest_percentage) / 2
         percentage = overall_percentage
 
-        if overall_percentage >= 95:
+        if overall_percentage >= 90:
             recommendation = "Approve"
-        elif 80 <= overall_percentage < 95:
+        elif 70 <= overall_percentage < 90:
             recommendation = "Inspect"
+        elif 50 <= overall_percentage < 70:
+            recommendation = "Reject"
         else:
-            recommendation = "Reject/Fail"
+            recommendation = "Reject"
 
     success, encoded_image = cv2.imencode(".png", frame)
     images.append((encoded_image, labels_confidences))
