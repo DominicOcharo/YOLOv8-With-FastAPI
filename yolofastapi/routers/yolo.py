@@ -1,6 +1,7 @@
 from fastapi import APIRouter, UploadFile, Response, status, HTTPException, Depends
 from sqlalchemy.orm import Session
 import cv2
+import gc
 import numpy as np
 from yolofastapi.detectors import yolov8
 from yolofastapi.schemas.yolo import ImageAnalysisResponse, FilteredImageAnalysisResponse
@@ -9,7 +10,7 @@ from yolofastapi.models import ImageAnalysis
 
 router = APIRouter(tags=["Image Upload and analysis"], prefix="/yolo")
 
-images = []
+# images = []
 
 @router.post("",
     status_code=status.HTTP_201_CREATED,
@@ -25,8 +26,8 @@ async def yolo_image_upload(file: UploadFile) -> ImageAnalysisResponse:
 
     labels, confidences = zip(*labels_confidences) if labels_confidences else ([], [])
     
-    success, encoded_image = cv2.imencode(".png", frame)
-    images.append((encoded_image, labels_confidences))
+    # success, encoded_image = cv2.imencode(".png", frame)
+    # images.append((encoded_image, labels_confidences))
 
     # db_image_analysis = ImageAnalysis(
     #     labels=",".join(labels),
@@ -106,8 +107,11 @@ async def yolo_image_upload_filtered(file: UploadFile) -> FilteredImageAnalysisR
         else:
             recommendation = "Reject"
 
-    success, encoded_image = cv2.imencode(".png", frame)
-    images.append((encoded_image, labels_confidences))
+    # success, encoded_image = cv2.imencode(".png", frame)
+    # images.append((encoded_image, labels_confidences))
+
+    del contents, np_array, image, frame, encoded_image
+    gc.collect()
 
     # db_image_analysis = ImageAnalysis(
     #     filtered_labels=",".join(filtered_labels),
@@ -141,7 +145,8 @@ async def yolo_image_download(image_id: int) -> Response:
     # if db_image is None:
     #     raise HTTPException(status_code=404, detail="Image not found")
     
-    encoded_image, labels_confidences = images[image_id - 1]
+    # encoded_image, labels_confidences = images[image_id - 1]
+    encoded_image, labels_confidences = [], []
     labels, confidences = zip(*labels_confidences) if labels_confidences else ([], [])
     headers = {
         "labels": ",".join(labels),
