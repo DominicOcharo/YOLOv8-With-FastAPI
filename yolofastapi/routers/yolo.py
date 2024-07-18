@@ -90,7 +90,7 @@ async def yolo_image_upload_filtered(file: UploadFile) -> FilteredImageAnalysisR
     recommendation = ""
 
     if person_count == 0:
-        recommendation = "Invalid, NA"
+        recommendation = "Reject"
     else:
         expected_count = person_count
         hardhat_percentage = (hardhat_count / expected_count) * 100
