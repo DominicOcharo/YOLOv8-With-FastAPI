@@ -20,6 +20,6 @@ app.add_middleware(
 app.include_router(yolo.router)
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
+    port = int(os.environ.get("PORT", 8000))
     server = Server(Config(app, host="127.0.0.1", port=port, lifespan="on"))
     server.run()
